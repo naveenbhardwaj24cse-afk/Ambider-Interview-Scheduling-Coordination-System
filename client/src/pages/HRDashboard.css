@@ -1,0 +1,188 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-header h1 {
+  font-size: 24px;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.dashboard-header p {
+  color: #64748b;
+  margin: 0;
+  font-size: 14px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.metric-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+}
+
+.metric-info p {
+  margin: 0 0 8px 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.metric-info h3 {
+  margin: 0;
+  font-size: 28px;
+  color: #1e293b;
+}
+
+.metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-icon.blue { background-color: #eff6ff; color: #3b82f6; }
+.metric-icon.green { background-color: #f0fdf4; color: #22c55e; }
+.metric-icon.light-blue { background-color: #f0f9ff; color: #0ea5e9; }
+.metric-icon.orange { background-color: #fff7ed; color: #f97316; }
+
+.status-overview-card h3 {
+  margin: 0 0 20px 0;
+  color: #1e293b;
+  font-size: 16px;
+}
+
+.status-bars {
+  display: flex;
+  gap: 16px;
+}
+
+.status-bar {
+  flex: 1;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid transparent;
+}
+
+.status-bar h3 {
+  margin: 0 0 4px 0;
+  font-size: 24px;
+}
+
+.status-bar p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.status-bar.pending { background-color: #fffbeb; color: #d97706; border-color: #fde68a; }
+.status-bar.confirmed { background-color: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+.status-bar.completed { background-color: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+.status-bar.rescheduled { background-color: #faf5ff; color: #6b21a8; border-color: #e9d5ff; }
+.status-bar.rejected { background-color: #fef2f2; color: #991b1b; border-color: #fecaca; }
+.status-bar.no-show { background-color: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+
+.dashboard-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.upcoming-interviews-card h3, .recent-activity-card h3 {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.interview-item, .activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.interview-details h4 {
+  margin: 0 0 4px 0;
+  color: #1e293b;
+}
+
+.interview-details p {
+  margin: 0 0 8px 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.time {
+  font-size: 12px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.green {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.activity-item {
+  justify-content: flex-start;
+  gap: 16px;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  border-radius: 0;
+  padding: 16px 0;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.activity-content p {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #334155;
+}
+
+.activity-content p span {
+  color: #64748b;
+}
+
+.no-data {
+  color: #94a3b8;
+  font-style: italic;
+}

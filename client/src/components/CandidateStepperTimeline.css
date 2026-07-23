@@ -1,0 +1,163 @@
+.stepper-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  width: 100px;
+}
+
+.stepper-icon-container {
+  height: 32px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.stepper-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.stepper-circle.completed {
+  background-color: var(--accent, #0ea5e9);
+  border: 2px solid var(--accent, #0ea5e9);
+  color: white;
+}
+
+.stepper-circle.active {
+  border: 2px solid var(--accent, #0ea5e9);
+  position: relative;
+}
+
+.stepper-circle-inner {
+  width: 12px;
+  height: 12px;
+  background-color: var(--accent, #0ea5e9);
+  border-radius: 50%;
+}
+
+.pulse-ring {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--accent, #0ea5e9);
+  animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+  z-index: -1;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.stepper-circle.upcoming {
+  border: 2px solid #cbd5e1;
+  background-color: #f8fafc;
+}
+
+.stepper-circle.terminal {
+  color: white;
+  background-color: #ef4444; /* default red */
+  border: 2px solid #ef4444;
+}
+
+.stepper-label {
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+.stepper-sublabel {
+  font-size: 0.75rem;
+  color: var(--text-muted, #64748b);
+  margin-top: 0.25rem;
+}
+
+.stepper-connector {
+  flex: 1;
+  height: 2px;
+  margin-top: 15px; /* aligns with center of 32px icon container */
+  z-index: 1;
+}
+
+.stepper-connector.completed {
+  background-color: var(--accent, #0ea5e9);
+}
+
+.stepper-connector.upcoming {
+  background-color: transparent;
+  border-top: 2px dashed #cbd5e1;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .stepper-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .stepper-step {
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 40px;
+  }
+  
+  .stepper-icon-container {
+    margin-right: 1rem;
+    margin-bottom: 0;
+  }
+  
+  .stepper-label {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .stepper-connector {
+    width: 2px;
+    height: 16px;
+    flex: none;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 15px; /* Aligns with center of 32px container */
+  }
+
+  .stepper-connector.upcoming {
+    border-top: none;
+    border-left: 2px dashed #cbd5e1;
+  }
+}
