@@ -10,7 +10,7 @@ const ClientOverview = () => {
   const handleApprove = async (id) => {
     if (!window.confirm('Are you sure you want to approve this selection and extend an official job offer?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/client/bookings/${id}/approve-selection`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/client/bookings/${id}/approve-selection`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -32,7 +32,7 @@ const ClientOverview = () => {
     const notes = window.prompt('Enter feedback/reason for rejection (optional):');
     if (notes === null) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/client/bookings/${id}/reject-selection`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/client/bookings/${id}/reject-selection`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',

@@ -17,7 +17,7 @@ const HRRequests = () => {
 
   const approveRequest = async (id, note) => {
     try {
-      await fetch(`http://localhost:5000/api/admin/hiring-requests/${id}/approve`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/admin/hiring-requests/${id}/approve`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ note })
@@ -30,7 +30,7 @@ const HRRequests = () => {
 
   const rejectRequest = async (id, reason) => {
     try {
-      await fetch(`http://localhost:5000/api/admin/hiring-requests/${id}/reject`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/admin/hiring-requests/${id}/reject`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ reason })
@@ -43,7 +43,7 @@ const HRRequests = () => {
 
   const updateRequestStatus = async (id, status) => {
     try {
-      await fetch(`http://localhost:5000/api/admin/hiring-requests/${id}/status`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/admin/hiring-requests/${id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status })
@@ -57,7 +57,7 @@ const HRRequests = () => {
   const assignRecruiter = async (id, recruiterId) => {
     if (!recruiterId) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/hiring-requests/${id}/assign`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/hiring-requests/${id}/assign`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ recruiterId })
@@ -77,7 +77,7 @@ const HRRequests = () => {
   const reassignRecruiter = async (id, recruiterId) => {
     if (!window.confirm('Are you sure you want to force a reassignment? This will deactivate the current linked Position and require the new Recruiter to start fresh.')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/hiring-requests/${id}/reassign`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/hiring-requests/${id}/reassign`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ recruiterId })

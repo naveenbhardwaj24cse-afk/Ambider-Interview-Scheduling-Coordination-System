@@ -12,9 +12,9 @@ const CandidateLayout = () => {
   const fetchPositionsAndBookings = async () => {
     try {
       const [posRes, bookRes, profRes] = await Promise.all([
-        fetch('http://localhost:5000/api/candidate/positions', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/candidate/bookings', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/candidate/profile', { headers: { Authorization: `Bearer ${token}` } })
+        fetch(`${import.meta.env.VITE_API_URL}/candidate/positions`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/candidate/bookings`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/candidate/profile`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       if (posRes.ok) setPositions(await posRes.json());
       if (bookRes.ok) setBookings(await bookRes.json());

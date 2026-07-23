@@ -19,7 +19,7 @@ const RecruiterBookings = () => {
   const shortlistCandidate = async (id) => {
     setIsLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/recruiter/bookings/${id}/shortlist`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/recruiter/bookings/${id}/shortlist`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -36,7 +36,7 @@ const RecruiterBookings = () => {
     if (!window.confirm('Are you sure you want to reject this applicant?')) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/recruiter/bookings/${id}/reject-applied`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/recruiter/bookings/${id}/reject-applied`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -52,7 +52,7 @@ const RecruiterBookings = () => {
   const cancelBooking = async (id) => {
     setIsCancelling(true);
     try {
-      await fetch(`http://localhost:5000/api/recruiter/bookings/${id}/cancel`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/recruiter/bookings/${id}/cancel`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -68,7 +68,7 @@ const RecruiterBookings = () => {
     if (!window.confirm('Are you sure you want to withdraw this candidate? This is a permanent action.')) return;
     setIsWithdrawing(true);
     try {
-      await fetch(`http://localhost:5000/api/recruiter/bookings/${id}/withdraw`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/recruiter/bookings/${id}/withdraw`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -83,7 +83,7 @@ const RecruiterBookings = () => {
   const submitOutcome = async (outcome) => {
     if (!evalModal.booking) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/recruiter/bookings/${evalModal.booking._id}/outcome`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/recruiter/bookings/${evalModal.booking._id}/outcome`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ outcome, notes: evalNotes })

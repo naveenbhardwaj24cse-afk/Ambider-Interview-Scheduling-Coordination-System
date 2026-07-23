@@ -15,7 +15,7 @@ const HRBookings = () => {
 
   const reextendOffer = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/bookings/${id}/re-extend-offer`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/bookings/${id}/re-extend-offer`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -34,7 +34,7 @@ const HRBookings = () => {
   const assignInterviewer = async (bookingId, round, interviewerId) => {
     if (!interviewerId) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/bookings/${bookingId}/assign-interviewer`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/bookings/${bookingId}/assign-interviewer`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ round, interviewerId })

@@ -17,7 +17,7 @@ const RecruiterPositions = () => {
     setError('');
     setIsLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/recruiter/availability', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/recruiter/availability`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ positionId, specificDate, startTime, endTime })

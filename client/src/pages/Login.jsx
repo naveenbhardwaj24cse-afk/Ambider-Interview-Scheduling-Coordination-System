@@ -22,7 +22,7 @@ const Login = () => {
 
   useEffect(() => {
     if (!isLogin && role === 'candidate') {
-      fetch('http://localhost:5000/api/auth/positions')
+      fetch(`${import.meta.env.VITE_API_URL}/auth/positions`)
         .then(res => res.json())
         .then(data => setPositions(data))
         .catch(err => console.error(err));
@@ -44,7 +44,7 @@ const Login = () => {
         };
 
     try {
-      const response = await fetch(`http://localhost:5000/api/auth${endpoint}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

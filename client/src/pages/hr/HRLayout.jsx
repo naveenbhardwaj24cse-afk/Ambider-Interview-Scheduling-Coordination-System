@@ -14,12 +14,12 @@ const HRLayout = () => {
   const fetchData = async () => {
     try {
       const [uRes, bRes, lRes, hRes, aRes, sRes] = await Promise.all([
-        fetch('http://localhost:5000/api/admin/users', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/admin/bookings', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/admin/notifications', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/admin/hiring-requests', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/admin/dashboard-alerts', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/admin/staff', { headers: { Authorization: `Bearer ${token}` } })
+        fetch(`${import.meta.env.VITE_API_URL}/admin/users`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/bookings`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/notifications`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/hiring-requests`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/dashboard-alerts`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/staff`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       if (uRes.ok) setUsers(await uRes.json());
       if (bRes.ok) setBookings(await bRes.json());

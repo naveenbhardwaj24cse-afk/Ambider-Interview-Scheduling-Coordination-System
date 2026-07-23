@@ -17,7 +17,7 @@ const CandidateOverview = () => {
     setIsWithdrawing(true);
     setError('');
     try {
-      const res = await fetch(`http://localhost:5000/api/candidate/bookings/${id}/withdraw`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/candidate/bookings/${id}/withdraw`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -37,7 +37,7 @@ const CandidateOverview = () => {
     setIsRespondingOffer(true);
     setError('');
     try {
-      const res = await fetch(`http://localhost:5000/api/candidate/bookings/${id}/accept-offer`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/candidate/bookings/${id}/accept-offer`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -57,7 +57,7 @@ const CandidateOverview = () => {
     setIsRespondingOffer(true);
     setError('');
     try {
-      const res = await fetch(`http://localhost:5000/api/candidate/bookings/${id}/decline-offer`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/candidate/bookings/${id}/decline-offer`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });

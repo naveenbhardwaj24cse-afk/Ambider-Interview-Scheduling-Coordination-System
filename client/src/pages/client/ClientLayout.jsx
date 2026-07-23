@@ -10,7 +10,7 @@ const ClientLayout = () => {
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/client/hiring-requests', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/client/hiring-requests`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) setRequests(await res.json());
@@ -22,7 +22,7 @@ const ClientLayout = () => {
 
   const fetchPendingApprovals = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/client/bookings/pending-approval', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/client/bookings/pending-approval`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) setPendingApprovals(await res.json());

@@ -27,7 +27,7 @@ const CandidatePositions = () => {
     setSelectedPosition(position);
     setOverlapError(null);
     try {
-      const res = await fetch(`http://localhost:5000/api/candidate/positions/${position._id}/slots`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/candidate/positions/${position._id}/slots`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) setSlots(await res.json());
@@ -40,7 +40,7 @@ const CandidatePositions = () => {
     setIsLoading(true);
     setError('');
     try {
-      const res = await fetch('http://localhost:5000/api/candidate/apply', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/candidate/apply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ positionId: position._id })
@@ -70,7 +70,7 @@ const CandidatePositions = () => {
       const [eh, em] = slot.endTime.split(':');
       endObj.setHours(parseInt(eh, 10), parseInt(em, 10), 0, 0);
 
-      const res = await fetch('http://localhost:5000/api/candidate/bookings', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/candidate/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ 

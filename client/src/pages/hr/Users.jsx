@@ -30,7 +30,7 @@ const HRUsers = () => {
         formData.append('cv', cvFile);
       }
 
-      const res = await fetch('http://localhost:5000/api/admin/users', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/users`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -49,7 +49,7 @@ const HRUsers = () => {
   const deactivateUser = async (id) => {
     setIsDeactivating(true);
     try {
-      await fetch(`http://localhost:5000/api/admin/users/${id}/deactivate`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/admin/users/${id}/deactivate`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -112,7 +112,7 @@ const HRUsers = () => {
                 <td>{u.email}</td>
                 <td style={{ textTransform: 'capitalize' }}>{u.role}</td>
                 <td>
-                  {u.cvUrl ? <a href={`http://localhost:5000${u.cvUrl}`} target="_blank" rel="noreferrer">View CV</a> : '-'}
+                  {u.cvUrl ? <a href={`${import.meta.env.VITE_API_URL.replace('/api', '')}${u.cvUrl}`} target="_blank" rel="noreferrer">View CV</a> : '-'}
                 </td>
                 <td>
                   <span style={{ 

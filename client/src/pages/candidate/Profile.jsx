@@ -16,7 +16,7 @@ const CandidateProfile = () => {
     try {
       const formData = new FormData();
       formData.append('cv', cvFile);
-      const res = await fetch('http://localhost:5000/api/candidate/cv', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/candidate/cv`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -40,7 +40,7 @@ const CandidateProfile = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <strong>Current CV: </strong>
-            {profile.cvUrl ? <a href={`http://localhost:5000${profile.cvUrl}`} target="_blank" rel="noreferrer">View Uploaded CV</a> : 'None uploaded'}
+            {profile.cvUrl ? <a href={`${import.meta.env.VITE_API_URL.replace('/api', '')}${profile.cvUrl}`} target="_blank" rel="noreferrer">View Uploaded CV</a> : 'None uploaded'}
           </div>
           <form onSubmit={uploadCv} style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <input type="file" accept=".pdf,.doc,.docx" onChange={e => setCvFile(e.target.files[0])} />

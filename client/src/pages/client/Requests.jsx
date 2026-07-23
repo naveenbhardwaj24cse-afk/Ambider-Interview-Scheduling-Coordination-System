@@ -22,8 +22,8 @@ const ClientRequests = () => {
     setError('');
     try {
       const url = editRequestId 
-        ? `http://localhost:5000/api/client/hiring-requests/${editRequestId}/resubmit`
-        : 'http://localhost:5000/api/client/hiring-requests';
+        ? `${import.meta.env.VITE_API_URL}/client/hiring-requests/${editRequestId}/resubmit`
+        : `${import.meta.env.VITE_API_URL}/client/hiring-requests`;
       const method = editRequestId ? 'PATCH' : 'POST';
       
       const res = await fetch(url, {
