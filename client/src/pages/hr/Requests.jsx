@@ -122,24 +122,14 @@ const HRRequests = () => {
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <Button 
                       style={{ padding: '0.25rem 0.5rem', fontSize: '12px' }} 
-                      onClick={() => {
-                        const note = window.prompt("Optional Approval Note for Client:");
-                        if (note !== null) {
-                          approveRequest(r._id, note || '');
-                        }
-                      }}
+                      onClick={() => approveRequest(r._id, '')}
                     >
                       Approve
                     </Button>
                     <Button 
                       variant="outline"
                       style={{ padding: '0.25rem 0.5rem', fontSize: '12px', color: 'var(--danger-color)', borderColor: 'var(--danger-color)' }}
-                      onClick={() => {
-                        const reason = window.prompt("Optional Rejection Reason for Client:");
-                        if (reason !== null) {
-                          rejectRequest(r._id, reason || '');
-                        }
-                      }}
+                      onClick={() => rejectRequest(r._id, '')}
                     >
                       Reject
                     </Button>
