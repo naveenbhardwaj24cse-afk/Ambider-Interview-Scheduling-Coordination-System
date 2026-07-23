@@ -17,7 +17,10 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Echo the origin back to allow any Vercel URL dynamically
+    callback(null, origin || true);
+  },
   credentials: true
 };
 app.use(cors(corsOptions));
