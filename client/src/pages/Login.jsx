@@ -105,6 +105,7 @@ const Login = () => {
                     <option value="candidate">Candidate</option>
                     <option value="recruiter">Recruiter</option>
                     <option value="client">Client (Company)</option>
+                    <option value="hr">HR (Admin)</option>
                   </select>
                 </div>
                 <div className="input-group">
