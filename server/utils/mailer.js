@@ -99,7 +99,7 @@ async function sendRecruiterNotification(recruiterEmail, candidateName, position
     if (profile && profile.cvFile && profile.cvFile.data) {
       attachments.push({
         filename: profile.cvFile.filename || 'CV.pdf',
-        content: profile.cvFile.data,
+        content: Buffer.from(profile.cvFile.data),
         contentType: profile.cvFile.contentType || 'application/pdf'
       });
     }
@@ -698,7 +698,7 @@ async function sendNewApplicationNotification(recruiter, candidate, booking, pos
     if (candidateProfile && candidateProfile.cvFile && candidateProfile.cvFile.data) {
       attachments.push({
         filename: candidateProfile.cvFile.filename || 'CV.pdf',
-        content: candidateProfile.cvFile.data,
+        content: Buffer.from(candidateProfile.cvFile.data),
         contentType: candidateProfile.cvFile.contentType || 'application/pdf'
       });
     }
@@ -742,7 +742,7 @@ async function sendSlotBookingConfirmationRecruiter(recruiter, candidate, bookin
     if (profile && profile.cvFile && profile.cvFile.data) {
       attachments.push({
         filename: profile.cvFile.filename || 'CV.pdf',
-        content: profile.cvFile.data,
+        content: Buffer.from(profile.cvFile.data),
         contentType: profile.cvFile.contentType || 'application/pdf'
       });
     }
