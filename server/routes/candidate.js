@@ -187,6 +187,8 @@ router.post('/bookings', async (req, res) => {
     }
 
     let booking;
+    const generatedMeetLink = `https://meet.google.com/${existingBookingId.slice(-4)}-${Math.random().toString(36).substring(2, 6)}`;
+    
     if (existingBookingId && oldBooking) {
       if (oldBooking.status === 'confirmed' && !oldBooking.slotStart) {
         // Round 1 slot booking
@@ -195,7 +197,8 @@ router.post('/bookings', async (req, res) => {
           {
             $set: {
               slotStart,
-              slotEnd
+              slotEnd,
+              meetLink: generatedMeetLink
             }
           },
           { new: true, session }
@@ -208,6 +211,7 @@ router.post('/bookings', async (req, res) => {
             $set: {
               slotStart,
               slotEnd,
+              meetLink: generatedMeetLink,
               status: 'confirmed'
             },
             $inc: { currentRound: 1 },
@@ -231,14 +235,6 @@ router.post('/bookings', async (req, res) => {
 
     await session.commitTransaction();
     session.endSession();
-
-    // Do non-transactional side-effects (calendar/email) outside the transaction lock
-    try {
-      booking.meetLink = `https://meet.google.com/${booking._id.toString().slice(-4)}-${Math.random().toString(36).substring(2, 6)}`;
-      await booking.save();
-    } catch (calendarErr) {
-      console.error('Failed to generate meet link:', calendarErr);
-    }
     
     try {
       const { sendSlotBookingConfirmationCandidate, sendSlotBookingConfirmationRecruiter } = require('../utils/mailer');

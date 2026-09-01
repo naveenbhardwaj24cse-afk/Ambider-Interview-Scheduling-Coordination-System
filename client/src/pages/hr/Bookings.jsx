@@ -66,13 +66,13 @@ const HRBookings = () => {
           >
             {bookings.map(b => (
               <tr key={b._id}>
-                <td>{b.recruiterId?.name}</td>
-                <td>{b.candidateId?.name}</td>
-                <td>{new Date(b.slotStart).toLocaleString()}</td>
+                <td>{b.recruiterId?.name || <span style={{color: 'gray'}}>Deleted User</span>}</td>
+                <td>{b.candidateId?.name || <span style={{color: 'gray'}}>Deleted User</span>}</td>
+                <td>{b.slotStart ? new Date(b.slotStart).toLocaleString() : <span style={{color: 'gray'}}>Not Scheduled</span>}</td>
                 <td style={{ textTransform: 'capitalize' }}>
                   <StatusBadge status={b.status} type="booking" />
                 </td>
-                <td>{b.meetLink ? <a href={b.meetLink} target="_blank" rel="noreferrer">Link</a> : 'N/A'}</td>
+                <td>{b.meetLink ? <a href={b.meetLink} target="_blank" rel="noreferrer">Link</a> : <span style={{color: 'gray'}}>N/A</span>}</td>
                 <td>
                   <Button variant="outline" onClick={() => openBookingModal(b)}>Manage</Button>
                 </td>

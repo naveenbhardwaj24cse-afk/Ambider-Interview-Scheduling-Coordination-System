@@ -154,7 +154,7 @@ const RecruiterBookings = () => {
           >
             {bookings.map(b => (
               <tr key={b._id}>
-                <td>{b.candidateId?.name} ({b.candidateEmail})</td>
+                <td>{b.candidateId?.name || <span style={{color: 'gray'}}>Deleted User</span>} ({b.candidateEmail})</td>
                 <td>
                   <span className="field-label">Company: </span>
                   <span className="field-value">{b.positionId?.companyName || 'N/A'}</span>
@@ -163,7 +163,7 @@ const RecruiterBookings = () => {
                   <span className="field-label">Position: </span>
                   <span className="field-value">{b.positionId?.title || 'N/A'}</span>
                 </td>
-                <td>{new Date(b.slotStart).toLocaleString()}</td>
+                <td>{b.slotStart ? new Date(b.slotStart).toLocaleString() : <span style={{color: 'gray'}}>Not Scheduled</span>}</td>
                 <td><StatusBadge status={b.status} type="booking" /></td>
                 <td>{b.currentRound} of {b.totalRounds}</td>
                 <td style={{ display: 'flex', gap: '0.5rem' }}>
