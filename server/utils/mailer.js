@@ -5,6 +5,24 @@ const CandidateProfile = require('../models/CandidateProfile');
 const path = require('path');
 const fs = require('fs');
 
+const { generateICS } = require('./calendarHelper');
+
+async function attachCV(candidateId) {
+  try {
+    const CandidateProfile = require('../models/CandidateProfile');
+    const profile = await CandidateProfile.findOne({ userId: candidateId });
+    if (profile?.cvFile?.data) {
+      return {
+        filename: profile.cvFile.filename || 'Candidate_CV.pdf',
+        content: Buffer.isBuffer(profile.cvFile.data) ? profile.cvFile.data : Buffer.from(profile.cvFile.data),
+        contentType: profile.cvFile.contentType || 'application/pdf'
+      };
+    }
+  } catch(e) { console.error('Error fetching CV attachment:', e); }
+  return null;
+}
+
+
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
   port: parseInt(process.env.MAIL_PORT),
@@ -388,35 +406,55 @@ async function sendClientRejectionNotification(booking) {
 }
 
 
-async function sendInterviewerAssignmentNotification(booking, interviewerEmail, positionTitle) {
+async function sendInterviewerAssignmentNotification(interviewer, booking, round) {
   try {
-    console.log('Sending email to:', arguments[0].email || arguments[1]?.email);
-    const BookingModel = require('../models/Booking');
-    const populated = await BookingModel.findById(booking._id)
-      .populate({
-        path: 'positionId',
-        populate: { path: 'linkedHiringRequestId' }
-      });
+    const Position = require('../models/Position');
+    const User = require('../models/User');
+    const position = await Position.findById(booking.positionId);
+    const candidate = await User.findById(booking.candidateId);
+    const recruiter = await User.findById(booking.recruiterId);
 
-    const positionTitle = populated.positionId?.title || 'the position';
-    const companyName = populated.positionId?.linkedHiringRequestId?.companyName || populated.positionId?.companyName || 'the company';
-
-    const emailText = `Hello ${interviewer.name},\n\nYou have been assigned as the interviewer for Round ${round} of the following booking:\n\nCandidate: ${booking.candidateName}\nPosition: ${positionTitle}\nCompany: ${companyName}\nRound: ${round}\n\nBooking ID: ${booking._id}\n\nPlease review your dashboard for details.\n\nThank you,\nAmbiDer Recruiting`;
+    const attachments = [];
+    const cv = await attachCV(booking.candidateId);
+    if (cv) attachments.push(cv);
+    
+    if (booking.slotStart && booking.slotEnd) {
+      const icsContent = generateICS(booking, candidate, position, recruiter);
+      if (icsContent) {
+        attachments.push({
+          filename: 'interview-invite.ics',
+          content: Buffer.from(icsContent, 'utf-8'),
+          contentType: 'text/calendar; charset=utf-8; method=REQUEST'
+        });
+      }
+    }
+    
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+        <h2 style="color: #2563eb;">Interview Assignment</h2>
+        <p>Hello <strong>${interviewer.name}</strong>,</p>
+        <p>You have been assigned as the interviewer for an upcoming round.</p>
+        <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 5px 0;"><strong>Candidate:</strong> ${candidate.name}</p>
+          <p style="margin: 5px 0;"><strong>Position:</strong> ${position.title}</p>
+          <p style="margin: 5px 0;"><strong>Round:</strong> ${round} of ${booking.totalRounds}</p>
+          <p style="margin: 5px 0;"><strong>Date/Time:</strong> ${booking.slotStart ? new Date(booking.slotStart).toLocaleString() : 'TBD'}</p>
+        </div>
+        ${booking.meetLink ? `<p><strong>Google Meet Link:</strong> <br/><a href="${booking.meetLink}" style="color: #059669; text-decoration: none; font-weight: bold; background: #ecfdf5; padding: 10px 15px; border-radius: 5px; display: inline-block; margin-top: 10px;">Join Meeting Now</a></p>` : ''}
+        <p>The candidate's CV is attached below to help you prepare.</p>
+        <br/>
+        <p>Best regards,<br/>The Ambider Team</p>
+      </div>
+    `;
 
     await transporter.sendMail({
       from: process.env.MAIL_FROM,
       to: interviewer.email,
-      subject: `You have been assigned as interviewer for Round ${round}`,
-      text: emailText
+      subject: `📅 Interview Assignment: ${candidate.name} for ${position.title} (Round ${round})`,
+      html: htmlBody,
+      attachments
     });
-
     console.log(`Interviewer assignment email sent to ${interviewer.email}`);
-    await NotificationLog.create({
-      type: 'other',
-      recipientEmail: interviewer.email,
-      subject: `Interviewer Assignment: Round ${round}`,
-      relatedBookingId: booking._id
-    });
   } catch (err) { console.error('Mailer error in sendInterviewerAssignmentNotification:', err); }
 }
 
@@ -488,60 +526,69 @@ async function sendOfferReExtendedNotification(candidate, booking) {
 
 async function sendShortlistNotification(candidate, booking, position) {
   try {
-    console.log('Sending email to:', arguments[0].email || arguments[1]?.email);
-    const companyName = position.companyName || 'the company';
-    const emailText = `Congratulations ${candidate.name},\n\nYou have been shortlisted for the ${position.title} position at ${companyName}.\n\nPlease log in to your Candidate Dashboard to book your interview slot.\n\nBest regards,\nAmbiDer Recruiting`;
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+        <h2 style="color: #2563eb;">You've Been Shortlisted!</h2>
+        <p>Congratulations <strong>${candidate.name}</strong>,</p>
+        <p>You have been shortlisted for the <strong>${position.title}</strong> position at ${position.companyName || 'the company'}.</p>
+        <p>Please log in to your Candidate Dashboard to book your interview slot.</p>
+        <br/>
+        <p>Best regards,<br/>AmbiDer Recruiting</p>
+      </div>
+    `;
 
     await transporter.sendMail({
       from: process.env.MAIL_FROM,
       to: candidate.email,
-      subject: `🎉 You've been shortlisted for ${position.title} at ${companyName}`,
-      text: emailText
+      subject: `🎉 You've been shortlisted for ${position.title} at ${position.companyName || 'the company'}`,
+      html: htmlBody
     });
     console.log(`Shortlist email sent to ${candidate.email}`);
-    await NotificationLog.create({
-      type: 'shortlist_notification',
-      recipientEmail: candidate.email,
-      subject: `Shortlisted for ${position.title}`,
-      relatedBookingId: booking?._id || null
-    });
   } catch (err) { console.error('Mailer error in sendShortlistNotification:', err); }
 }
 
 
 async function sendSlotBookingConfirmationCandidate(candidate, booking, position) {
   try {
-    console.log('Sending email to:', arguments[0].email || arguments[1]?.email);
-    const { generateICS } = require('./calendarHelper');
-    const icsContent = generateICS(booking, candidate, position, { name: 'Recruiter', email: process.env.MAIL_FROM });
-    const attachments = [];
-    if (icsContent) {
-      attachments.push({
-        filename: 'invite.ics',
-        content: Buffer.from(icsContent, 'utf-8'),
-        contentType: 'text/calendar'
-      });
-    }
-    const companyName = position.companyName || 'the company';
-    const dateStr = new Date(booking.slotStart).toLocaleString('en-US', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
-    const endStr = new Date(booking.slotEnd).toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const User = require('../models/User');
+    const recruiter = await User.findById(booking.recruiterId);
     
-    const emailText = `Hello ${candidate.name},\n\nYour interview is confirmed.\n\nDate/Time: ${dateStr} - ${endStr}\nRound: ${booking.currentRound} of ${booking.totalRounds}\n\nJoin here: ${booking.meetLink}\n\nPlease find the calendar invite attached.`;
+    const attachments = [];
+    if (booking.slotStart && booking.slotEnd) {
+      const icsContent = generateICS(booking, candidate, position, recruiter);
+      if (icsContent) {
+        attachments.push({
+          filename: 'interview-invite.ics',
+          content: Buffer.from(icsContent, 'utf-8'),
+          contentType: 'text/calendar; charset=utf-8; method=REQUEST'
+        });
+      }
+    }
+
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+        <h2 style="color: #2563eb;">Interview Scheduled Successfully!</h2>
+        <p>Hello <strong>${candidate.name}</strong>,</p>
+        <p>Your interview for the <strong>${position.title}</strong> position at ${position.companyName || 'the company'} has been confirmed.</p>
+        <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 5px 0;"><strong>Round:</strong> ${booking.currentRound} of ${booking.totalRounds}</p>
+          <p style="margin: 5px 0;"><strong>Date/Time:</strong> ${new Date(booking.slotStart).toLocaleString()}</p>
+        </div>
+        ${booking.meetLink ? `<p><strong>Google Meet Link:</strong> <br/><a href="${booking.meetLink}" style="color: #059669; text-decoration: none; font-weight: bold; background: #ecfdf5; padding: 10px 15px; border-radius: 5px; display: inline-block; margin-top: 10px;">Join Meeting</a></p>` : ''}
+        <p>Please find the calendar invite attached.</p>
+        <br/>
+        <p>Best regards,<br/>AmbiDer Recruiting</p>
+      </div>
+    `;
 
     await transporter.sendMail({
       from: process.env.MAIL_FROM,
       to: candidate.email,
-      subject: `📅 Interview Confirmed — ${position.title} at ${companyName} | Round ${booking.currentRound}`,
-      text: emailText,
+      subject: `✅ Interview Confirmed - ${position.title}`,
+      html: htmlBody,
       attachments
     });
-    console.log(`Slot booking confirmation sent to candidate ${candidate.email}`);
-    await NotificationLog.create({
-      type: 'slot_booking_candidate',
-      recipientEmail: candidate.email,
-      subject: `Interview Confirmed — ${position.title} Round ${booking.currentRound}`,
-      relatedBookingId: booking?._id || null
-    });
+    console.log(`Slot confirmation sent to candidate ${candidate.email}`);
   } catch (err) { console.error('Mailer error in sendSlotBookingConfirmationCandidate:', err); }
 }
 
@@ -642,11 +689,6 @@ async function sendOfferExpiredNotification(candidate, booking) {
 
 async function sendNewApplicationNotification(recruiter, candidate, booking, position, candidateProfile) {
   try {
-    console.log('Sending email to:', arguments[0].email || arguments[1]?.email);
-    const companyName = position.companyName || 'the company';
-    const BookingModel = require('../models/Booking');
-    const applicantsCount = await BookingModel.countDocuments({ positionId: position._id });
-    
     const attachments = [];
     if (candidateProfile?.cvFile?.data) {
       attachments.push({
@@ -654,72 +696,79 @@ async function sendNewApplicationNotification(recruiter, candidate, booking, pos
         content: Buffer.isBuffer(candidateProfile.cvFile.data) ? candidateProfile.cvFile.data : Buffer.from(candidateProfile.cvFile.data),
         contentType: candidateProfile.cvFile.contentType || 'application/pdf'
       });
+    } else {
+      const cv = await attachCV(booking.candidateId);
+      if (cv) attachments.push(cv);
     }
     
-    const emailText = `Hello ${recruiter.name},\n\n**${candidate.name}** has applied for ${position.title} at ${companyName} on ${new Date(booking.createdAt).toLocaleDateString()}.\n\nThere are now ${applicantsCount} candidates in the pipeline for this position.\n\nPlease log in to shortlist or reject this application.\n\nBest regards,\nAmbiDer System`;
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+        <h2 style="color: #2563eb;">New Application Received</h2>
+        <p>Hello <strong>${recruiter.name}</strong>,</p>
+        <p><strong>${candidate.name}</strong> has just applied for the <strong>${position.title}</strong> position at ${position.companyName || 'the company'}.</p>
+        <p>Date Applied: ${new Date(booking.createdAt).toLocaleDateString()}</p>
+        <p>The candidate's CV is attached to this email.</p>
+        <p>Please log in to the dashboard to shortlist or reject this application.</p>
+        <br/>
+        <p>Best regards,<br/>AmbiDer System</p>
+      </div>
+    `;
 
     await transporter.sendMail({
       from: process.env.MAIL_FROM,
       to: recruiter.email,
-      subject: `📋 New Application — ${candidate.name} for ${position.title} at ${companyName}`,
-      text: emailText,
+      subject: `📋 New Application — ${candidate.name} for ${position.title}`,
+      html: htmlBody,
       attachments
     });
     console.log(`New application email sent to recruiter ${recruiter.email}`);
-    await NotificationLog.create({
-      type: 'new_application',
-      recipientEmail: recruiter.email,
-      subject: `New Application — ${candidate.name} for ${position.title}`,
-      relatedBookingId: booking?._id || null
-    });
   } catch (err) { console.error('Mailer error in sendNewApplicationNotification:', err); }
 }
 
 
 async function sendSlotBookingConfirmationRecruiter(recruiter, candidate, booking, position) {
   try {
-    console.log('Sending email to:', arguments[0].email || arguments[1]?.email);
-    const { generateICS } = require('./calendarHelper');
-    const icsContent = generateICS(booking, candidate, position, recruiter);
     const attachments = [];
-    if (icsContent) {
-      attachments.push({
-        filename: 'invite.ics',
-        content: Buffer.from(icsContent, 'utf-8'),
-        contentType: 'text/calendar'
-      });
+    const cv = await attachCV(booking.candidateId);
+    if (cv) attachments.push(cv);
+    
+    if (booking.slotStart && booking.slotEnd) {
+      const icsContent = generateICS(booking, candidate, position, recruiter);
+      if (icsContent) {
+        attachments.push({
+          filename: 'interview-invite.ics',
+          content: Buffer.from(icsContent, 'utf-8'),
+          contentType: 'text/calendar; charset=utf-8; method=REQUEST'
+        });
+      }
     }
-    
-    const CandidateProfileModel = require('../models/CandidateProfile');
-    const profile = await CandidateProfileModel.findOne({ userId: candidate.id || candidate._id });
-    if (profile?.cvFile?.data) {
-      attachments.push({
-        filename: profile.cvFile.filename || 'CV.pdf',
-        content: Buffer.isBuffer(profile.cvFile.data) ? profile.cvFile.data : Buffer.from(profile.cvFile.data),
-        contentType: profile.cvFile.contentType || 'application/pdf'
-      });
-    }
-    
-    const companyName = position.companyName || 'the company';
-    const dateStr = new Date(booking.slotStart).toLocaleString('en-US', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
-    const endStr = new Date(booking.slotEnd).toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    
-    const emailText = `Hello ${recruiter.name},\n\nAn interview has been scheduled for **${candidate.name}**.\n\nPosition: ${position.title} at ${companyName}\nRound: ${booking.currentRound} of ${booking.totalRounds}\nDate/Time: ${dateStr} - ${endStr}\n\nJoin here: ${booking.meetLink}\n\nBest regards,\nAmbiDer System`;
+
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+        <h2 style="color: #2563eb;">New Interview Scheduled</h2>
+        <p>Hello <strong>${recruiter.name}</strong>,</p>
+        <p>An interview has just been booked by a candidate.</p>
+        <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 5px 0;"><strong>Candidate:</strong> ${candidate.name}</p>
+          <p style="margin: 5px 0;"><strong>Position:</strong> ${position.title} (${position.companyName || 'the company'})</p>
+          <p style="margin: 5px 0;"><strong>Round:</strong> ${booking.currentRound} of ${booking.totalRounds}</p>
+          <p style="margin: 5px 0;"><strong>Date/Time:</strong> ${new Date(booking.slotStart).toLocaleString()}</p>
+        </div>
+        ${booking.meetLink ? `<p><strong>Google Meet Link:</strong> <br/><a href="${booking.meetLink}" style="color: #059669; text-decoration: none; font-weight: bold; background: #ecfdf5; padding: 10px 15px; border-radius: 5px; display: inline-block; margin-top: 10px;">Join Meeting</a></p>` : ''}
+        <p>The candidate's CV and the calendar invite are attached.</p>
+        <br/>
+        <p>Best regards,<br/>AmbiDer System</p>
+      </div>
+    `;
 
     await transporter.sendMail({
       from: process.env.MAIL_FROM,
       to: recruiter.email,
-      subject: `📅 Interview Scheduled — ${candidate.name} | ${position.title} | Round ${booking.currentRound} of ${booking.totalRounds}`,
-      text: emailText,
+      subject: `📅 Interview Booked: ${candidate.name} for ${position.title}`,
+      html: htmlBody,
       attachments
     });
     console.log(`Slot booking confirmation sent to recruiter ${recruiter.email}`);
-    await NotificationLog.create({
-      type: 'slot_booking_recruiter',
-      recipientEmail: recruiter.email,
-      subject: `Interview Scheduled — ${candidate.name} | ${position.title} Round ${booking.currentRound}`,
-      relatedBookingId: booking?._id || null
-    });
   } catch (err) { console.error('Mailer error in sendSlotBookingConfirmationRecruiter:', err); }
 }
 
