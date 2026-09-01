@@ -173,8 +173,9 @@ router.patch('/bookings/:id/re-extend-offer', async (req, res) => {
     await booking.save();
     
     try {
+      const candidateUser = await User.findById(booking.candidateId);
       const { sendOfferReExtendedNotification } = require('../utils/mailer');
-      await sendOfferReExtendedNotification(booking.candidateId, booking);
+      await sendOfferReExtendedNotification(candidateUser, booking);
       await NotificationLog.create({ bookingId: booking._id, type: 'offer_reextended', recipientEmail: booking.candidateEmail, subject: `Your offer for ${booking.positionId?.title} has been reinstated` });
     } catch (emailErr) {
       console.error('Failed to send re-extend email:', emailErr);
@@ -313,8 +314,9 @@ router.patch('/hiring-requests/:id/approve', async (req, res) => {
     await request.save();
     
     try {
+      const clientUser = await User.findById(request.clientId);
       const { sendHRRequestApprovalNotification } = require('../utils/mailer');
-      await sendHRRequestApprovalNotification(request.clientId, request);
+      await sendHRRequestApprovalNotification(clientUser, request);
     } catch (mailErr) {
       console.error('Failed to send HR approval notification:', mailErr);
     }
@@ -339,8 +341,9 @@ router.patch('/hiring-requests/:id/reject', async (req, res) => {
     await request.save();
     
     try {
+      const clientUser = await User.findById(request.clientId);
       const { sendHRRequestRejectionNotification } = require('../utils/mailer');
-      await sendHRRequestRejectionNotification(request.clientId, request);
+      await sendHRRequestRejectionNotification(clientUser, request);
     } catch (mailErr) {
       console.error('Failed to send HR rejection notification:', mailErr);
     }
