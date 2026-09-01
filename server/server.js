@@ -25,7 +25,25 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const CandidateProfile = require('./models/CandidateProfile');
+
+app.get('/uploads/:filename', async (req, res) => {
+  try {
+    const profile = await CandidateProfile.findOne({ 
+      'cvUrl': `/uploads/${req.params.filename}`
+    });
+    
+    if (!profile || !profile.cvFile || !profile.cvFile.data) {
+      return res.status(404).send('File not found');
+    }
+    
+    res.set('Content-Type', profile.cvFile.contentType);
+    res.send(profile.cvFile.data);
+  } catch (err) {
+    console.error('Error serving file:', err);
+    res.status(500).send('Server error');
+  }
+});
 
 // Routes
 app.use('/api/auth', authRoutes);

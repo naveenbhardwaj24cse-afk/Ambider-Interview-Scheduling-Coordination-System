@@ -14,7 +14,12 @@ const candidateProfileSchema = new mongoose.Schema({
     enum: ['Applied', 'Screening', 'Interviewing', 'Offered', 'Rejected'],
     default: 'Applied'
   },
-  cvUrl: { type: String }
+  cvUrl: { type: String },
+  cvFile: {
+    data: Buffer,
+    contentType: String,
+    filename: String
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('CandidateProfile', candidateProfileSchema);

@@ -96,23 +96,12 @@ async function sendRecruiterNotification(recruiterEmail, candidateName, position
     }
 
     const profile = await CandidateProfile.findOne({ userId: booking.candidateId });
-    if (profile && profile.cvUrl) {
-      const cvPath = path.join(__dirname, '..', profile.cvUrl);
-      if (fs.existsSync(cvPath)) {
-        const ext = path.extname(profile.cvUrl) || '.pdf';
-        let mimeType = 'application/pdf';
-        if (ext === '.doc') mimeType = 'application/msword';
-        if (ext === '.docx') mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-
-        const cvBuffer = fs.readFileSync(cvPath);
-        attachments.push({
-          filename: `CV_${booking.candidateName.replace(/\s+/g, '_')}${ext}`,
-          content: cvBuffer,
-          contentType: mimeType
-        });
-      } else {
-        console.warn(`CV file not found at ${cvPath}`);
-      }
+    if (profile && profile.cvFile && profile.cvFile.data) {
+      attachments.push({
+        filename: profile.cvFile.filename || `CV_${booking.candidateName.replace(/\s+/g, '_')}.pdf`,
+        content: profile.cvFile.data,
+        contentType: profile.cvFile.contentType
+      });
     }
 
     const emailText = `Hello ${recruiterName},\n\nA candidate has booked an interview.\n\nCandidate: ${booking.candidateName}\nPosition: ${positionTitle}\nRound: ${booking.currentRound} of ${booking.totalRounds}\nTime: ${new Date(booking.slotStart).toLocaleString()}\n\nJoin here: ${booking.meetLink}\n\nPlease find the candidate's CV and the calendar invite attached.`;
@@ -706,15 +695,12 @@ async function sendNewApplicationNotification(recruiter, candidate, booking, pos
     const applicantsCount = await BookingModel.countDocuments({ positionId: position._id });
     
     const attachments = [];
-    if (candidateProfile && candidateProfile.cvUrl) {
-      const cvPath = path.join(__dirname, '..', candidateProfile.cvUrl);
-      if (fs.existsSync(cvPath)) {
-        const ext = path.extname(candidateProfile.cvUrl) || '.pdf';
-        attachments.push({
-          filename: `${candidate.name.replace(/\s+/g, '_')}_CV${ext}`,
-          path: cvPath
-        });
-      }
+    if (candidateProfile && candidateProfile.cvFile && candidateProfile.cvFile.data) {
+      attachments.push({
+        filename: candidateProfile.cvFile.filename || `${candidate.name.replace(/\s+/g, '_')}_CV.pdf`,
+        content: candidateProfile.cvFile.data,
+        contentType: candidateProfile.cvFile.contentType
+      });
     }
     
     const emailText = `Hello ${recruiter.name},\n\n**${candidate.name}** has applied for ${position.title} at ${companyName} on ${new Date(booking.createdAt).toLocaleDateString()}.\n\nThere are now ${applicantsCount} candidates in the pipeline for this position.\n\nPlease log in to shortlist or reject this application.\n\nBest regards,\nAmbiDer System`;
@@ -753,15 +739,12 @@ async function sendSlotBookingConfirmationRecruiter(recruiter, candidate, bookin
     
     const CandidateProfileModel = require('../models/CandidateProfile');
     const profile = await CandidateProfileModel.findOne({ userId: candidate.id || candidate._id });
-    if (profile && profile.cvUrl) {
-      const cvPath = path.join(__dirname, '..', profile.cvUrl);
-      if (fs.existsSync(cvPath)) {
-        const ext = path.extname(profile.cvUrl) || '.pdf';
-        attachments.push({
-          filename: `${candidate.name.replace(/\s+/g, '_')}_CV${ext}`,
-          path: cvPath
-        });
-      }
+    if (profile && profile.cvFile && profile.cvFile.data) {
+      attachments.push({
+        filename: profile.cvFile.filename || `${candidate.name.replace(/\s+/g, '_')}_CV.pdf`,
+        content: profile.cvFile.data,
+        contentType: profile.cvFile.contentType
+      });
     }
     
     const companyName = position.companyName || 'the company';

@@ -54,11 +54,17 @@ router.post('/users', upload.single('cv'), async (req, res) => {
     const user = await User.create({ name, email, passwordHash: hash, role });
     
     if (role === 'candidate' && req.file) {
+      const safeFilename = Date.now() + '-' + req.file.originalname.replace(/\s+/g, '_');
       await CandidateProfile.create({
         userId: user._id,
         name: user.name,
         email: user.email,
-        cvUrl: `/uploads/${req.file.filename}`
+        cvUrl: `/uploads/${safeFilename}`,
+        cvFile: {
+          data: req.file.buffer,
+          contentType: req.file.mimetype,
+          filename: safeFilename
+        }
       });
     }
     

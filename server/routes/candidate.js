@@ -20,7 +20,8 @@ router.use(requireRole(['candidate']));
 router.post('/cv', upload.single('cv'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    const cvUrl = `/uploads/${req.file.filename}`;
+    const safeFilename = Date.now() + '-' + req.file.originalname.replace(/\s+/g, '_');
+    const cvUrl = `/uploads/${safeFilename}`;
     
     // Create or update profile
     let profile = await CandidateProfile.findOne({ userId: req.user.id });
@@ -30,10 +31,20 @@ router.post('/cv', upload.single('cv'), async (req, res) => {
         userId: user._id,
         name: user.name,
         email: user.email,
-        cvUrl
+        cvUrl,
+        cvFile: {
+          data: req.file.buffer,
+          contentType: req.file.mimetype,
+          filename: safeFilename
+        }
       });
     } else {
       profile.cvUrl = cvUrl;
+      profile.cvFile = {
+        data: req.file.buffer,
+        contentType: req.file.mimetype,
+        filename: safeFilename
+      };
       await profile.save();
     }
     
