@@ -29,8 +29,13 @@ const CandidateProfile = require('./models/CandidateProfile');
 
 app.get('/uploads/:filename', async (req, res) => {
   try {
+    const filename = req.params.filename;
     const profile = await CandidateProfile.findOne({ 
-      'cvUrl': `/uploads/${req.params.filename}`
+      $or: [
+        { 'cvFile.filename': filename },
+        { 'cvUrl': `/uploads/${filename}` },
+        { 'cvUrl': `uploads/${filename}` }
+      ]
     });
     
     if (!profile || !profile.cvFile || !profile.cvFile.data) {

@@ -98,9 +98,9 @@ async function sendRecruiterNotification(recruiterEmail, candidateName, position
     const profile = await CandidateProfile.findOne({ userId: booking.candidateId });
     if (profile && profile.cvFile && profile.cvFile.data) {
       attachments.push({
-        filename: profile.cvFile.filename || `CV_${booking.candidateName.replace(/\s+/g, '_')}.pdf`,
+        filename: profile.cvFile.filename || 'CV.pdf',
         content: profile.cvFile.data,
-        contentType: profile.cvFile.contentType
+        contentType: profile.cvFile.contentType || 'application/pdf'
       });
     }
 
@@ -697,9 +697,9 @@ async function sendNewApplicationNotification(recruiter, candidate, booking, pos
     const attachments = [];
     if (candidateProfile && candidateProfile.cvFile && candidateProfile.cvFile.data) {
       attachments.push({
-        filename: candidateProfile.cvFile.filename || `${candidate.name.replace(/\s+/g, '_')}_CV.pdf`,
+        filename: candidateProfile.cvFile.filename || 'CV.pdf',
         content: candidateProfile.cvFile.data,
-        contentType: candidateProfile.cvFile.contentType
+        contentType: candidateProfile.cvFile.contentType || 'application/pdf'
       });
     }
     
@@ -741,9 +741,9 @@ async function sendSlotBookingConfirmationRecruiter(recruiter, candidate, bookin
     const profile = await CandidateProfileModel.findOne({ userId: candidate.id || candidate._id });
     if (profile && profile.cvFile && profile.cvFile.data) {
       attachments.push({
-        filename: profile.cvFile.filename || `${candidate.name.replace(/\s+/g, '_')}_CV.pdf`,
+        filename: profile.cvFile.filename || 'CV.pdf',
         content: profile.cvFile.data,
-        contentType: profile.cvFile.contentType
+        contentType: profile.cvFile.contentType || 'application/pdf'
       });
     }
     
