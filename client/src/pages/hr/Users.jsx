@@ -136,36 +136,38 @@ const HRUsers = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Add New User</h2>
-            {error && <div style={{ color: 'var(--danger-color)', marginBottom: '1rem' }}>{error}</div>}
-            <form onSubmit={createUser} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div className="input-group">
-                <label className="input-label">Full Name</label>
-                <Input placeholder="John Doe" value={name} onChange={e => setName(e.target.value)} required />
+            <div className="modal-header">
+              <h2>Add New User</h2>
+            </div>
+            <form onSubmit={createUser} className="modal-body">
+              {error && <div style={{ color: 'var(--danger-color)' }}>{error}</div>}
+              <div>
+                <label>Full Name</label>
+                <input type="text" placeholder="John Doe" value={name} onChange={e => setName(e.target.value)} required />
               </div>
-              <div className="input-group">
-                <label className="input-label">Email</label>
-                <Input type="email" placeholder="john@ambider.com" value={email} onChange={e => setEmail(e.target.value)} required />
+              <div>
+                <label>Email</label>
+                <input type="email" placeholder="john@ambider.com" value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
-              <div className="input-group">
-                <label className="input-label">Password</label>
-                <Input type="password" placeholder="Min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required />
+              <div>
+                <label>Password</label>
+                <input type="password" placeholder="Min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required />
               </div>
-              <div className="input-group">
-                <label className="input-label">Role</label>
-                <select className="input-field" value={role} onChange={e => setRole(e.target.value)} required>
+              <div>
+                <label>Role</label>
+                <select value={role} onChange={e => setRole(e.target.value)} required>
                   <option value="hr">HR</option>
                   <option value="recruiter">Recruiter</option>
                   <option value="candidate">Candidate</option>
                 </select>
               </div>
               {role === 'candidate' && (
-                <div className="input-group">
-                  <label className="input-label">CV / Resume (PDF/DOC)</label>
-                  <input type="file" accept=".pdf,.doc,.docx" onChange={e => setCvFile(e.target.files[0])} className="input-field" />
+                <div>
+                  <label>CV / Resume (PDF/DOC)</label>
+                  <input type="file" accept=".pdf,.doc,.docx" onChange={e => setCvFile(e.target.files[0])} />
                 </div>
               )}
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+              <div className="modal-footer">
                 <Button type="button" variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
                 <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving...' : 'Create User'}</Button>
               </div>

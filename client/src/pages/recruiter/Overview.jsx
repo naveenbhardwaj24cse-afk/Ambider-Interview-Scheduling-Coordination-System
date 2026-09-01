@@ -75,26 +75,28 @@ const RecruiterOverview = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Add New Candidate</h2>
-            {error && <div style={{ color: 'var(--danger-color)', marginBottom: '1rem' }}>{error}</div>}
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="modal-header">
+              <h2>Add New Candidate</h2>
+            </div>
+            <form onSubmit={handleSubmit} className="modal-body">
+              {error && <div style={{ color: 'var(--danger-color)' }}>{error}</div>}
               <div>
                 <label>Name</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ width: '100%', padding: '0.5rem' }} />
+                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
               </div>
               <div>
                 <label>Email</label>
-                <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} style={{ width: '100%', padding: '0.5rem' }} />
+                <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
               </div>
               <div>
                 <label>Password</label>
-                <input required type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} style={{ width: '100%', padding: '0.5rem' }} />
+                <input required type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
               </div>
               <div>
                 <label>CV (Optional, PDF/DOC)</label>
-                <input type="file" accept=".pdf,.doc,.docx" onChange={e => setCvFile(e.target.files[0])} style={{ width: '100%' }} />
+                <input type="file" accept=".pdf,.doc,.docx" onChange={e => setCvFile(e.target.files[0])} />
               </div>
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+              <div className="modal-footer">
                 <Button type="button" variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
                 <Button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save Candidate'}</Button>
               </div>
