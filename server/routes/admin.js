@@ -97,6 +97,22 @@ router.patch('/users/:id/deactivate', async (req, res) => {
   }
 });
 
+router.delete('/users/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    await User.findByIdAndDelete(req.params.id);
+    if (user.role === 'candidate') {
+      await CandidateProfile.findOneAndDelete({ userId: req.params.id });
+    }
+    
+    res.json({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
+});
+
 // Bookings
 router.get('/bookings', async (req, res) => {
   try {

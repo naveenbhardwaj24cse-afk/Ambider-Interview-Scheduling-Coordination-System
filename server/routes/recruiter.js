@@ -12,6 +12,53 @@ const router = express.Router();
 router.use(requireAuth);
 router.use(requireRole(['recruiter']));
 
+const upload = require('../utils/upload');
+const bcrypt = require('bcrypt');
+const User = require('../models/User');
+
+// Add Candidate
+router.post('/candidates', upload.single('cv'), async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(409).json({ error: 'Email already exists' });
+    
+    const hash = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, passwordHash: hash, role: 'candidate' });
+    
+    if (req.file) {
+      const safeFilename = Date.now() + '-' + req.file.originalname.replace(/\s+/g, '_');
+      await CandidateProfile.create({
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        cvUrl: `/uploads/${safeFilename}`,
+        cvFile: {
+          data: req.file.buffer,
+          contentType: req.file.mimetype,
+          filename: safeFilename
+        }
+      });
+    } else {
+      await CandidateProfile.create({
+        userId: user._id,
+        name: user.name,
+        email: user.email
+      });
+    }
+    
+    // Optional: send credentials if available
+    try {
+      const { sendCredentialsNotification } = require('../utils/mailer');
+      if (sendCredentialsNotification) await sendCredentialsNotification(name, email, password, 'candidate');
+    } catch (e) { console.warn('Could not send credentials', e); }
+
+    res.json({ message: 'Candidate created successfully', user });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create candidate', details: err.message });
+  }
+});
+
 // Positions
 router.post('/positions', async (req, res) => {
   try {
