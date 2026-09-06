@@ -853,7 +853,7 @@ async function sendOfferExpiredNotificationRecruiter(recruiter, booking) {
 async function sendCredentialsNotification(name, email, password, role) {
   try {
     console.log('Sending credentials to:', email);
-    const portalLink = process.env.FRONTEND_URL || 'https://ambider-interview-scheduling-coordination-system.vercel.app/login';
+    const portalLink = process.env.FRONTEND_URL || 'https://ambider-interview-scheduling-coordi.vercel.app/login';
     let roleName = role;
     if (role === 'candidate') roleName = 'Candidate';
     if (role === 'recruiter') roleName = 'Recruiter';
