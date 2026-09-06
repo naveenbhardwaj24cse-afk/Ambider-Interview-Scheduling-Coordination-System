@@ -33,8 +33,8 @@ const ClientLayout = () => {
   };
 
   useEffect(() => {
-    await fetchRequests();
-    await fetchPendingApprovals();
+    fetchRequests();
+    fetchPendingApprovals();
   }, []);
 
   const context = {

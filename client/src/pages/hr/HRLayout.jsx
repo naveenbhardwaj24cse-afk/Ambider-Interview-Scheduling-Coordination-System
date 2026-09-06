@@ -32,7 +32,7 @@ const HRLayout = () => {
     }
   };
 
-  useEffect(() => { await fetchData(); }, []);
+  useEffect(() => { fetchData(); }, []);
 
   const context = {
     users, bookings, logs, hiringRequests, staff, alerts, token, fetchData
