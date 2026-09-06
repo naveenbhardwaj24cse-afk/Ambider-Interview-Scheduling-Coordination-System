@@ -34,8 +34,11 @@ const transporter = nodemailer.createTransport({
 });
 
 transporter.verify((error, success) => {
-  if (error) console.error('❌ Mailer config error:', error);
-  else console.log('✅ Mailer ready');
+  if (error) {
+    console.error('❌ SMTP Connection Failed:', error);
+  } else {
+    console.log('✅ SMTP Server is ready to send emails');
+  }
 });
 
 function generateIcsString(booking, positionTitle, recruiterName) {
@@ -93,7 +96,7 @@ async function sendConfirmation(booking, positionTitle, recruiterName) {
       subject: `Interview Confirmed: ${positionTitle}`,
       relatedBookingId: booking._id
     });
-  } catch (err) { console.error('Mailer error in sendConfirmation:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendConfirmation:', err); }
 }
 
 
@@ -135,7 +138,7 @@ async function sendRecruiterNotification(recruiterEmail, candidateName, position
       subject: `New Interview Booked: ${booking.candidateName}`,
       relatedBookingId: booking._id
     });
-  } catch (err) { console.error('Mailer error in sendRecruiterNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendRecruiterNotification:', err); }
 }
 
 
@@ -155,7 +158,7 @@ async function sendReminder(booking, positionTitle) {
       subject: 'Interview Reminder',
       relatedBookingId: booking._id
     });
-  } catch (err) { console.error('Mailer error in sendReminder:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendReminder:', err); }
 }
 
 
@@ -175,7 +178,7 @@ async function sendCancellation(booking) {
       subject: 'Interview Cancelled',
       relatedBookingId: booking._id
     });
-  } catch (err) { console.error('Mailer error in sendCancellation:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendCancellation:', err); }
 }
 
 
@@ -196,7 +199,7 @@ async function sendNextRoundInvite(booking) {
       subject: 'Next Round Booking Link',
       relatedBookingId: booking._id
     });
-  } catch (err) { console.error('Mailer error in sendNextRoundInvite:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendNextRoundInvite:', err); }
 }
 
 
@@ -217,7 +220,7 @@ async function sendWithdrawal(booking) {
       subject: 'Application Withdrawn',
       relatedBookingId: booking._id
     });
-  } catch (err) { console.error('Mailer error in sendWithdrawal:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendWithdrawal:', err); }
 }
 
 
@@ -241,7 +244,7 @@ async function sendCandidateWithdrawalNotification(booking) {
       subject: 'Candidate Withdrawal Notification',
       relatedBookingId: booking._id
     });
-  } catch (err) { console.error('Mailer error in sendCandidateWithdrawalNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendCandidateWithdrawalNotification:', err); }
 }
 
 
@@ -281,7 +284,7 @@ async function sendCandidateSelectedNotification(booking) {
         relatedBookingId: booking._id
       });
     }
-  } catch (err) { console.error('Mailer error in sendCandidateSelectedNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendCandidateSelectedNotification:', err); }
 }
 
 
@@ -321,7 +324,7 @@ async function sendOfferAcceptedNotification(booking) {
         relatedBookingId: booking._id
       });
     }
-  } catch (err) { console.error('Mailer error in sendOfferAcceptedNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendOfferAcceptedNotification:', err); }
 }
 
 
@@ -361,7 +364,7 @@ async function sendOfferDeclinedNotification(booking) {
         relatedBookingId: booking._id
       });
     }
-  } catch (err) { console.error('Mailer error in sendOfferDeclinedNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendOfferDeclinedNotification:', err); }
 }
 
 
@@ -402,7 +405,7 @@ async function sendClientRejectionNotification(booking) {
         relatedBookingId: booking._id
       });
     }
-  } catch (err) { console.error('Mailer error in sendClientRejectionNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendClientRejectionNotification:', err); }
 }
 
 
@@ -455,7 +458,7 @@ async function sendInterviewerAssignmentNotification(interviewer, booking, round
       attachments
     });
     console.log(`Interviewer assignment email sent to ${interviewer.email}`);
-  } catch (err) { console.error('Mailer error in sendInterviewerAssignmentNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendInterviewerAssignmentNotification:', err); }
 }
 
 
@@ -476,7 +479,7 @@ async function sendHRRequestApprovalNotification(client, hiringRequest) {
       subject: `Hiring Request Approved — ${hiringRequest.jobTitle}`,
       relatedBookingId: null
     });
-  } catch (err) { console.error('Mailer error in sendHRRequestApprovalNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendHRRequestApprovalNotification:', err); }
 }
 
 
@@ -497,7 +500,7 @@ async function sendHRRequestRejectionNotification(client, hiringRequest) {
       subject: `Hiring Request Not Approved — ${hiringRequest.jobTitle}`,
       relatedBookingId: null
     });
-  } catch (err) { console.error('Mailer error in sendHRRequestRejectionNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendHRRequestRejectionNotification:', err); }
 }
 
 
@@ -516,7 +519,7 @@ async function sendOfferReExtendedNotification(candidate, booking) {
       text: emailText
     });
     console.log(`Offer re-extended email sent to ${candidate.email || booking.candidateEmail}`);
-  } catch (err) { console.error('Mailer error in sendOfferReExtendedNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendOfferReExtendedNotification:', err); }
 }
 
 // ========================================================
@@ -544,7 +547,7 @@ async function sendShortlistNotification(candidate, booking, position) {
       html: htmlBody
     });
     console.log(`Shortlist email sent to ${candidate.email}`);
-  } catch (err) { console.error('Mailer error in sendShortlistNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendShortlistNotification:', err); }
 }
 
 
@@ -589,7 +592,7 @@ async function sendSlotBookingConfirmationCandidate(candidate, booking, position
       attachments
     });
     console.log(`Slot confirmation sent to candidate ${candidate.email}`);
-  } catch (err) { console.error('Mailer error in sendSlotBookingConfirmationCandidate:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendSlotBookingConfirmationCandidate:', err); }
 }
 
 
@@ -612,7 +615,7 @@ async function sendRoundPassedNotification(candidate, booking, position) {
       subject: `Round ${booking.currentRound - 1} Passed — ${position.title}`,
       relatedBookingId: booking?._id || null
     });
-  } catch (err) { console.error('Mailer error in sendRoundPassedNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendRoundPassedNotification:', err); }
 }
 
 
@@ -635,7 +638,7 @@ async function sendPendingClientApprovalNotification(candidate, booking, positio
       subject: `Final Review in Progress — ${position.title}`,
       relatedBookingId: booking?._id || null
     });
-  } catch (err) { console.error('Mailer error in sendPendingClientApprovalNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendPendingClientApprovalNotification:', err); }
 }
 
 
@@ -660,7 +663,7 @@ async function sendOfferExtendedNotification(candidate, booking, position) {
       subject: `Offer Extended — ${position.title}`,
       relatedBookingId: booking?._id || null
     });
-  } catch (err) { console.error('Mailer error in sendOfferExtendedNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendOfferExtendedNotification:', err); }
 }
 
 
@@ -683,7 +686,7 @@ async function sendOfferExpiredNotification(candidate, booking) {
       subject: `Offer Expired — ${positionTitle}`,
       relatedBookingId: booking?._id || null
     });
-  } catch (err) { console.error('Mailer error in sendOfferExpiredNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendOfferExpiredNotification:', err); }
 }
 
 
@@ -722,7 +725,7 @@ async function sendNewApplicationNotification(recruiter, candidate, booking, pos
       attachments
     });
     console.log(`New application email sent to recruiter ${recruiter.email}`);
-  } catch (err) { console.error('Mailer error in sendNewApplicationNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendNewApplicationNotification:', err); }
 }
 
 
@@ -769,7 +772,7 @@ async function sendSlotBookingConfirmationRecruiter(recruiter, candidate, bookin
       attachments
     });
     console.log(`Slot booking confirmation sent to recruiter ${recruiter.email}`);
-  } catch (err) { console.error('Mailer error in sendSlotBookingConfirmationRecruiter:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendSlotBookingConfirmationRecruiter:', err); }
 }
 
 
@@ -795,7 +798,7 @@ async function sendRoundResultNotification(recruiter, candidate, booking, positi
       subject: `Round ${lastRound} Result — ${candidate.name} ${resultText}`,
       relatedBookingId: booking?._id || null
     });
-  } catch (err) { console.error('Mailer error in sendRoundResultNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendRoundResultNotification:', err); }
 }
 
 
@@ -820,7 +823,7 @@ async function sendOfferExpiredNotificationHR(hrEmail, booking) {
       subject: `Offer Expired — ${booking.candidateName} for ${positionTitle}`,
       relatedBookingId: booking?._id || null
     });
-  } catch (err) { console.error('Mailer error in sendOfferExpiredNotificationHR:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendOfferExpiredNotificationHR:', err); }
 }
 
 async function sendOfferExpiredNotificationRecruiter(recruiter, booking) {
@@ -844,7 +847,7 @@ async function sendOfferExpiredNotificationRecruiter(recruiter, booking) {
       subject: `Offer Expired — ${booking.candidateName} for ${positionTitle}`,
       relatedBookingId: booking?._id || null
     });
-  } catch (err) { console.error('Mailer error in sendOfferExpiredNotificationRecruiter:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendOfferExpiredNotificationRecruiter:', err); }
 }
 
 async function sendCredentialsNotification(name, email, password, role) {
@@ -889,7 +892,7 @@ async function sendCredentialsNotification(name, email, password, role) {
       subject: `Welcome to Ambider! Your Login Credentials`,
       relatedBookingId: null
     });
-  } catch (err) { console.error('Mailer error in sendCredentialsNotification:', err); }
+  } catch (err) { console.error('❌ Mailer failed in sendCredentialsNotification:', err); }
 }
 
 module.exports = { 

@@ -49,7 +49,7 @@ const CandidatePositions = () => {
       if (!res.ok) throw new Error(data.error || 'Failed to apply');
       
       alert('Applied successfully! Awaiting shortlist.');
-      fetchPositionsAndBookings();
+      await fetchPositionsAndBookings();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -93,7 +93,7 @@ const CandidatePositions = () => {
       
       alert(bookingRoundFor ? 'Next round booked successfully!' : 'Interview booked successfully!');
       setSelectedPosition(null);
-      fetchPositionsAndBookings();
+      await fetchPositionsAndBookings();
     } catch (err) {
       setError(err.message);
     } finally {

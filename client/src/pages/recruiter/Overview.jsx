@@ -3,8 +3,9 @@ import { useOutletContext } from 'react-router-dom';
 import Button from '../../components/Button';
 
 const RecruiterOverview = () => {
-  const { positions, bookings, hiringRequests, token } = useOutletContext();
+  const { positions, bookings, hiringRequests, token, fetchData } = useOutletContext();
   const userId = JSON.parse(atob(token.split('.')[1])).id;
+  const navigate = useNavigate();
 
   const openPositions = positions.filter(p => p.isActive).length;
   const pendingShortlist = bookings.filter(b => b.status === 'applied' && b.recruiterId === userId).length;
@@ -40,6 +41,7 @@ const RecruiterOverview = () => {
         setFormData({ name: '', email: '', password: '' });
         setCvFile(null);
         alert('Candidate added successfully!');
+        await fetchData();
       } else {
         const d = await res.json();
         setError(d.error || 'Failed to add candidate');

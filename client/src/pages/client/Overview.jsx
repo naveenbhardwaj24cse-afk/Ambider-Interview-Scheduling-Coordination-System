@@ -16,8 +16,8 @@ const ClientOverview = () => {
       });
       if (res.ok) {
         alert('Offer extended to candidate successfully.');
-        fetchPendingApprovals();
-        fetchRequests();
+        await fetchPendingApprovals();
+        await fetchRequests();
       } else {
         const errData = await res.json();
         alert(errData.error || 'Failed to approve selection');
@@ -42,8 +42,8 @@ const ClientOverview = () => {
       });
       if (res.ok) {
         alert('Candidate selection rejected.');
-        fetchPendingApprovals();
-        fetchRequests();
+        await fetchPendingApprovals();
+        await fetchRequests();
       } else {
         const errData = await res.json();
         alert(errData.error || 'Failed to reject selection');

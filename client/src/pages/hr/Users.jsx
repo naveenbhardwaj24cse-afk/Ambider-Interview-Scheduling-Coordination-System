@@ -41,7 +41,7 @@ const HRUsers = () => {
       if (!res.ok) throw new Error(data.error || 'Failed to create user');
       setName(''); setEmail(''); setPassword(''); setCvFile(null);
       setShowModal(false);
-      fetchData();
+      await fetchData();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -56,7 +56,7 @@ const HRUsers = () => {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchData();
+      await fetchData();
     } catch (e) {
       console.error(e);
     } finally {
@@ -74,7 +74,7 @@ const HRUsers = () => {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchData();
+      await fetchData();
     } catch (e) {
       console.error(e);
     } finally {

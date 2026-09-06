@@ -24,7 +24,7 @@ const CandidateOverview = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to withdraw application');
       alert('Application withdrawn successfully');
-      fetchPositionsAndBookings();
+      await fetchPositionsAndBookings();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -44,7 +44,7 @@ const CandidateOverview = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to accept offer');
       alert('Offer accepted! Congratulations.');
-      fetchPositionsAndBookings();
+      await fetchPositionsAndBookings();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -64,7 +64,7 @@ const CandidateOverview = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to decline offer');
       alert('Offer declined.');
-      fetchPositionsAndBookings();
+      await fetchPositionsAndBookings();
     } catch (err) {
       setError(err.message);
     } finally {

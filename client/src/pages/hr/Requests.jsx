@@ -22,7 +22,7 @@ const HRRequests = () => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ note })
       });
-      fetchData();
+      await fetchData();
     } catch (e) {
       console.error(e);
     }
@@ -35,7 +35,7 @@ const HRRequests = () => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ reason })
       });
-      fetchData();
+      await fetchData();
     } catch (e) {
       console.error(e);
     }
@@ -48,7 +48,7 @@ const HRRequests = () => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status })
       });
-      fetchData();
+      await fetchData();
     } catch (e) {
       console.error(e);
     }
@@ -67,7 +67,7 @@ const HRRequests = () => {
         alert(data.error || 'Failed to assign recruiter');
         return;
       }
-      fetchData();
+      await fetchData();
     } catch (e) {
       console.error(e);
       alert('Network error assigning recruiter');
@@ -87,7 +87,7 @@ const HRRequests = () => {
         alert(data.error || 'Failed to reassign recruiter');
         return;
       }
-      fetchData();
+      await fetchData();
     } catch (e) {
       console.error(e);
       alert('Network error reassigning recruiter');

@@ -35,7 +35,7 @@ const RecruiterLayout = () => {
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { await fetchData(); }, []);
 
   const context = {
     positions, bookings, hiringRequests, token, fetchData, error, setError, format12Hour

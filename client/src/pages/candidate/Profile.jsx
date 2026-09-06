@@ -25,7 +25,7 @@ const CandidateProfile = () => {
       if (!res.ok) throw new Error(data.error || 'Failed to upload CV');
       alert('CV uploaded successfully!');
       setCvFile(null);
-      fetchPositionsAndBookings();
+      await fetchPositionsAndBookings();
     } catch (err) {
       setError(err.message);
     } finally {

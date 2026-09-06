@@ -36,7 +36,7 @@ const ClientRequests = () => {
       setJobTitle(''); setCompanyName(''); setDesignation(''); setRequesterDesignation(''); setSkillsRequired(''); setHeadcount(1); setDescription('');
       setEditRequestId(null);
       alert(editRequestId ? 'Hiring request resubmitted to HR.' : 'Hiring request submitted to HR.');
-      fetchRequests();
+      await fetchRequests();
     } catch (err) {
       setError(err.message);
     } finally {

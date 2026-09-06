@@ -22,7 +22,7 @@ const HRBookings = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to re-extend offer');
       alert('Offer has been successfully reinstated.');
-      fetchData();
+      await fetchData();
       if (selectedBooking && selectedBooking._id === id) {
         setSelectedBooking(data);
       }
@@ -48,7 +48,7 @@ const HRBookings = () => {
       if (selectedBooking && selectedBooking._id === bookingId) {
         setSelectedBooking(data);
       }
-      fetchData();
+      await fetchData();
     } catch (e) {
       console.error(e);
       alert('Network error assigning interviewer');

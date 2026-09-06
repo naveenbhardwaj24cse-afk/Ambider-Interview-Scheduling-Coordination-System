@@ -23,7 +23,7 @@ const RecruiterBookings = () => {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.ok) fetchData();
+      if (res.ok) await fetchData();
       else alert((await res.json()).error || 'Failed to shortlist');
     } catch (e) {
       console.error(e);
@@ -40,7 +40,7 @@ const RecruiterBookings = () => {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.ok) fetchData();
+      if (res.ok) await fetchData();
       else alert((await res.json()).error || 'Failed to reject');
     } catch (e) {
       console.error(e);
@@ -56,7 +56,7 @@ const RecruiterBookings = () => {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchData();
+      await fetchData();
     } catch (e) {
       console.error(e);
     } finally {
@@ -72,7 +72,7 @@ const RecruiterBookings = () => {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchData();
+      await fetchData();
     } catch (e) {
       console.error(e);
     } finally {
@@ -91,7 +91,7 @@ const RecruiterBookings = () => {
       if (res.ok) {
         setEvalModal({ isOpen: false, booking: null });
         setEvalNotes('');
-        fetchData();
+        await fetchData();
       }
     } catch (err) {
       console.error(err);

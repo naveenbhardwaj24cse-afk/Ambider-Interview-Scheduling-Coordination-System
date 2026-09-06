@@ -25,7 +25,7 @@ const CandidateLayout = () => {
     }
   };
 
-  useEffect(() => { fetchPositionsAndBookings(); }, []);
+  useEffect(() => { await fetchPositionsAndBookings(); }, []);
 
   const context = {
     positions, bookings, profile, token, fetchPositionsAndBookings, error, setError

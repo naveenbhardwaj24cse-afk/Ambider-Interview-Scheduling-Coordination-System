@@ -32,7 +32,7 @@ const RecruiterRequests = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to create position');
       setTitle(''); setCompanyName(''); setSkills(''); setClientDescription(''); setTotalRounds(1); setOpenSlots(1); setHiringRequestId('');
-      fetchData();
+      await fetchData();
     } catch (err) {
       setError(err.message);
     } finally {
