@@ -49,6 +49,10 @@ app.get('/uploads/:filename', async (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.json({ status: 'online', message: 'Ambider API is running securely!' });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
