@@ -850,25 +850,43 @@ async function sendOfferExpiredNotificationRecruiter(recruiter, booking) {
 async function sendCredentialsNotification(name, email, password, role) {
   try {
     console.log('Sending credentials to:', email);
-    let portalLink = 'http://localhost:5173/login';
+    const portalLink = process.env.FRONTEND_URL || 'https://ambider-interview-scheduling-coordination-system.vercel.app/login';
     let roleName = role;
     if (role === 'candidate') roleName = 'Candidate';
     if (role === 'recruiter') roleName = 'Recruiter';
     if (role === 'client') roleName = 'Client';
+    if (role === 'hr') roleName = 'HR Admin';
 
-    const emailText = `Hello ${name},\n\nYour account has been created successfully.\n\nRole: ${roleName}\n\nHere are your login credentials:\nEmail: ${email}\nPassword: ${password}\n\nPlease login at: ${portalLink}\n\nBest regards,\nAmbiDer System`;
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+        <h2 style="color: #2563eb;">Welcome to Ambider!</h2>
+        <p>Hello <strong>${name}</strong>,</p>
+        <p>Your ${roleName} account has been created successfully.</p>
+        <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0;">
+          <h3 style="margin-top: 0; color: #0f172a;">Your Login Credentials</h3>
+          <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
+          <p style="margin: 5px 0;"><strong>Password:</strong> ${password}</p>
+        </div>
+        <p>Please log in to your dashboard to change your password and get started:</p>
+        <p>
+          <a href="${portalLink}" style="color: #ffffff; text-decoration: none; font-weight: bold; background: #2563eb; padding: 10px 15px; border-radius: 5px; display: inline-block; margin-top: 5px;">Go to Login</a>
+        </p>
+        <br/>
+        <p>Best regards,<br/>The Ambider Team</p>
+      </div>
+    `;
 
     await transporter.sendMail({
       from: process.env.MAIL_FROM,
       to: email,
-      subject: `Welcome to AmbiDer! Your Login Credentials`,
-      text: emailText
+      subject: `Welcome to Ambider! Your Login Credentials`,
+      html: htmlBody
     });
 
     await NotificationLog.create({
       type: 'credentials_sent',
       recipientEmail: email,
-      subject: 'Welcome to AmbiDer! Your Login Credentials',
+      subject: `Welcome to Ambider! Your Login Credentials`,
       relatedBookingId: null
     });
   } catch (err) { console.error('Mailer error in sendCredentialsNotification:', err); }
